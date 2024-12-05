@@ -1,22 +1,19 @@
-const { photo, tag } = require('../models'); 
-const { validateTags } = require('../validators/tag.validator'); 
+const { tag, photo } = require("../models");
 
-const addTagsToPhoto = async (photoId, newTags) => {
-  const associatedPhoto = await photo.findByPk(photoId);
+const addTagsToPhoto = async (photoId, tags) => {
+  const photoInstance = await photo.findByPk(photoId);
 
-  if (!associatedPhoto) {
+  if (!photoInstance) {
     throw new Error('Photo not found');
   }
 
-  const existingTagsCount = associatedPhoto.tags.length;
+  const existingTags = await tag.findAll({ where: { photoId } });
 
-  validateTags(newTags, existingTagsCount);
+  if (existingTags.length + tags.length > 5) {
+    throw new Error('Each photo can have a maximum of 5 tags');
+  }
 
-  const tagsToAdd = newTags.map(tag => ({ name: tag, photoId: photoId }));
-  
-  await tag.bulkCreate(tagsToAdd);
-
-  return photo;
+  await Promise.all(tags.map((tag) => tag.create({ name: tag, photoId })));
 };
 
 module.exports = { addTagsToPhoto };

@@ -1,19 +1,21 @@
-const { addTagsToPhoto } = require('../service/tag.service');
+const { addTagsToPhoto } = require('../services/tagService');
 
-const addTagsController = async (req, res) => {
-  const { photoId } = req.params; 
-  const { tags } = req.body; 
-
+const addTags = async (req, res) => {
   try {
-    const updatedPhoto = await addTagsToPhoto(photoId, tags);
+    const { tags } = req.body;
+    const { photoId } = req.params;
 
-    return res.status(200).json({
-      message: 'Tags added successfully',
-      photo: updatedPhoto,
-    });
+    if (tags.some((tag) => !tag.trim())) {
+      return res.status(400).json({ message: 'Tags must be non-empty strings' });
+    }
+
+    await addTagsToPhoto(photoId, tags);
+
+    res.status(200).json({ message: 'Tags added successfully' });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Failed to add tags' });
   }
 };
 
-module.exports = { addTagsController };
+module.exports = { addTags };
