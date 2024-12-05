@@ -1,4 +1,4 @@
-const { addTagsToPhoto } = require('../services/tagService');
+const { addTagsToPhoto } = require('../service/tag.service');
 
 const addTags = async (req, res) => {
   try {
