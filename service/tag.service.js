@@ -13,7 +13,7 @@ const addTagsToPhoto = async (photoId, tags) => {
     throw new Error('Each photo can have a maximum of 5 tags');
   }
 
-  await Promise.all(tags.map((tag) => tag.create({ name: tag, photoId })));
+  await Promise.all(tags.map((tagInstance) => tag.create({ name: tagInstance, photoId })));
 };
 
 module.exports = { addTagsToPhoto };
