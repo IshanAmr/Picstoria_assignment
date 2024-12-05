@@ -1,5 +1,5 @@
 const { validateRequestBody, validateEmailFormat } = require('../validators/user.validator');
-const { doesUserExist, createUser } = require('../service/user.service');
+const { doesUserExist, createUser, retrieveSearchHistory } = require('../service/user.service');
 
 const createNewUser = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ const createNewUser = async (req, res) => {
 
     const userExists = await doesUserExist(email);
     if (userExists) {
-      return res.status(400).json({ message: 'Email already exists.' });
+      return res.status(400).json({ message : 'Email already exists.' });
     }
 
     const newUser = await createUser(username, email);
@@ -23,4 +23,16 @@ const createNewUser = async (req, res) => {
   }
 };
 
-module.exports = { createNewUser };
+const getSearchHistory = async (req, res) => {
+   try {
+    const { userId } = req.query;
+    if(!userId) return res.status(400).json({ message : "Invalid user id" });
+
+    const searchHistory = await retrieveSearchHistory(userId);
+    res.status(201).json(searchHistory);
+   } catch (error) {
+    res.status(500).json({ error: error.message });
+   }
+}
+
+module.exports = { createNewUser, getSearchHistory };

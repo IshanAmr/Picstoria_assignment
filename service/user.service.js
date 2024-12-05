@@ -1,4 +1,4 @@
-const { user } = require("../models");
+const { user, searchHistory } = require("../models");
 
 const doesUserExist = async (email) => {
   const existingUser = await user.findOne({ where: { email } });
@@ -9,4 +9,8 @@ const createUser = async (username, email) => {
   return await user.create({ username, email });
 };
 
-module.exports = { doesUserExist, createUser };
+const retrieveSearchHistory = async (userId) => {
+    return await searchHistory.findAll({ where : { userId } });
+}
+
+module.exports = { doesUserExist, createUser, retrieveSearchHistory };
