@@ -1,18 +1,24 @@
-const { savePhoto } = require('../service/photo.service'); 
+const { searchImages } = require('../service/photo.service');
 
-const savePhotoController = async (req, res) => {
-  const { imageUrl, description, altDescription, tags, userId } = req.body;
-
+const searchPhotos = async (req, res) => {
   try {
-    const newPhoto = await savePhoto({ imageUrl, description, altDescription, tags, userId });
+    const { query } = req.query;
 
-    return res.status(201).json({
-      message: 'Photo saved successfully',
-      photo: newPhoto,
-    });
+    if (!query) {
+      return res.status(400).json({ message: 'Search term is required' });
+    }
+
+    const photos = await searchImages(query);
+
+    if (photos.length === 0) {
+      return res.status(404).json({ message: 'No images found for the given query' });
+    }
+
+    res.status(200).json({ photos });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch images from Unsplash' });
   }
 };
 
-module.exports = { savePhotoController };
+module.exports = { searchPhotos };

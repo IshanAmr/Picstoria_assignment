@@ -8,10 +8,10 @@ const createNewUser = async (req, res) => {
     validateRequestBody(req.body);
     validateEmailFormat(email);
 
-    // const userExists = await doesUserExist(email);
-    // if (userExists) {
-    //   return res.status(400).json({ message: 'Email already exists.' });
-    // }
+    const userExists = await doesUserExist(email);
+    if (userExists) {
+      return res.status(400).json({ message: 'Email already exists.' });
+    }
 
     const newUser = await createUser(username, email);
     res.status(201).json({
